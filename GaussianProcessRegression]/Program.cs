@@ -14,6 +14,7 @@ namespace GaussianProcessRegression
         static void Main(string[] args)
         {
             double[][] dataX_Y = arrayTojag(CsvFileIO.CsvFileIO.ReadData("GaussianProcessData20121209.txt"));
+            //CsvFileIO.CsvFileIO.WriteData("motoData.csv", jagToarray(dataX_Y));
             double[][] data_X = new double[dataX_Y.GetLength(0)][];
             for (int i = 0; i < dataX_Y.GetLength(0); i++)
             {
@@ -21,7 +22,7 @@ namespace GaussianProcessRegression
             }
 
             double[] data_y = new double[dataX_Y.GetLength(0)];
-            double[][] new_data_X = new double[100][];
+            double[][] new_data_X = new double[150][];
             for (int i = 0; i < new_data_X.GetLength(0); i++)
             {
                 new_data_X[i] = new double[1];
@@ -42,6 +43,8 @@ namespace GaussianProcessRegression
 
             EstimationDistribution(data_X, data_y, new_data_X, alpha, beta, out exp, out var);
 
+            CsvFileIO.CsvFileIO.WriteData("exp.csv", exp);
+            CsvFileIO.CsvFileIO.WriteData("var.csv", var);
         }
 
         static void EstimationDistribution(double[][] data_X, double[] data_y, double[][] new_data_X, double alpha, double beta, out double[] exp, out double[] var)
@@ -59,9 +62,10 @@ namespace GaussianProcessRegression
 
             for (int i = 0; i < I; i++)
                 for (int j = 0; j < I; j++)
-                    C[i][j] = GaussianKernel(data_X[i], data_X[j]) / alpha + 1 / beta;
+                    C[i][j] = GaussianKernel(data_X[i], data_X[j]) / alpha ;
             C_inv = jagToarray(C);
-            C_inv = Mt.Inverse(jagToarray(C));  //Inner2zikeisiki
+            C_inv = Mt.Add(C_inv, Mt.Mul(1.0 / beta, Mt.DiagonalMatrix(I, 1.0)));
+            C_inv = Mt.Inverse(C_inv);  //Inner2zikeisiki
 
             for (int n = 0; n < new_data_X.Length; n++)
             {

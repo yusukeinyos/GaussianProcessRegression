@@ -98,5 +98,21 @@ namespace CsvFileIO
             swT.Close();
         }
         //----------------------------------------------------------------------------------------
+        public static void WriteData(string filename, double[] data)
+        {
+            int I = data.Length;
+
+            string temp;
+
+            StreamWriter swT = new StreamWriter(filename);
+            for (int i = 0; i < I; i++)
+            {
+                temp = "";
+                temp += data[i].ToString();
+                swT.WriteLine(temp);
+            }
+            swT.Close();
+        }
+        //----------------------------------------------------------------------------------------
     }
 }
